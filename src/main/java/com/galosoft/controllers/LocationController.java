@@ -11,12 +11,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.galosoft.entities.Location;
 import com.galosoft.service.LocationService;
+import com.galosoft.utils.EmailUtil;
 
 @Controller
 public class LocationController {
 	
 	@Autowired
 	LocationService service;
+	
+	@Autowired
+	EmailUtil emailUtil;
 	
 	@RequestMapping("/showCreate")
 	public String showCreate() {
@@ -28,6 +32,7 @@ public class LocationController {
 		Location locationSaved = service.saveLocation(location);
 		String msg = "Location saved with id: " + locationSaved.getId();
 		modelMap.addAttribute("msg", msg);
+		emailUtil.sendEmail("internick13@gmail.com","Location saved","Location saved successfully");
 		return "createLocation";
 	}
 	
