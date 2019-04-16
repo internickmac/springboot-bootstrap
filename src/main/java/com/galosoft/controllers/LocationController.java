@@ -2,6 +2,8 @@ package com.galosoft.controllers;
 
 import java.util.List;
 
+import javax.servlet.ServletContext;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -10,8 +12,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.galosoft.entities.Location;
+import com.galosoft.repos.LocationRepository;
 import com.galosoft.service.LocationService;
 import com.galosoft.utils.EmailUtil;
+import com.galosoft.utils.ReportUtil;
 
 @Controller
 public class LocationController {
@@ -21,6 +25,15 @@ public class LocationController {
 	
 	@Autowired
 	EmailUtil emailUtil;
+	
+	@Autowired
+	LocationRepository locationRepository;
+	
+	@Autowired
+	ReportUtil reportUtil;
+	
+	@Autowired
+	ServletContext sc;
 	
 	@RequestMapping("/showCreate")
 	public String showCreate() {
@@ -65,6 +78,15 @@ public class LocationController {
 		List<Location> locations = service.getAllLocations();
 		modelMap.addAttribute("locations",locations);
 		return "displayLocations";
+	}
+	
+	
+	@RequestMapping("/generateReport")
+	public String generateReport() {
+		String path = sc.getRealPath("/");
+		List<Object[]> data =  locationRepository.findTypeAndTypeCount();
+		reportUtil.generatePieChart(path, data);
+		return "report";
 	}
 	
 }
